@@ -3,42 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAMP To-Do App</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #4a4a4a; }
-        form { display: flex; margin-bottom: 20px; }
-        input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 15px; border: none; background-color: #5c67f2; color: white; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-        button:hover { background-color: #4a54e1; }
-        ul { list-style-type: none; padding: 0; }
-        li { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        li.completed span { text-decoration: line-through; color: #aaa; }
-        li span { flex-grow: 1; }
-        a { text-decoration: none; color: #fff; padding: 5px 10px; border-radius: 4px; margin-left: 5px; font-size: 12px; }
-        .update-btn { background-color: #28a745; }
-        .delete-btn { background-color: #dc3545; }
-    </style>
+    <title>To-Do App</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div id="tsparticles"></div>
+
+    <button id="theme-toggle">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+    </button>
+
     <div class="container">
-        <h1>📝 My To-Do List</h1>
+        <h1>📝 My Tasks</h1>
         <form action="{{ url_for('add_task') }}" method="POST">
-            <input type="text" name="title" placeholder="Add a new task..." required>
+            <input type="text" name="title" placeholder="What needs to be done?" required>
             <button type="submit">Add Task</button>
         </form>
         <ul>
             {% for task in tasks %}
             <li class="{% if task.completed %}completed{% endif %}">
                 <span>{{ task.title }}</span>
-                <a href="{{ url_for('update_task', task_id=task.id) }}" class="update-btn">
-                    {% if task.completed %}Undo{% else %}Done{% endif %}
-                </a>
-                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="delete-btn">Delete</a>
+                <div class="task-actions">
+                    <a href="{{ url_for('update_task', task_id=task.id) }}" class="update-btn">
+                        {% if task.completed %}Undo{% else %}Done{% endif %}
+                    </a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}" class="delete-btn">Delete</a>
+                </div>
             </li>
             {% endfor %}
         </ul>
     </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
