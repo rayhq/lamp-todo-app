@@ -116,34 +116,7 @@ db_config = {
 
 ---
 
-### 5️⃣ Configure the WSGI Entry Point
-
-The `todo.wsgi` file connects Apache with your Flask app.
-
-```bash
-sudo nano todo.wsgi
-```
-
-Replace its content with:
-
-```python
-# File: todo.wsgi
-import os
-import sys
-import logging
-
-project_home = os.path.dirname(__file__)
-if project_home not in sys.path:
-    sys.path.insert(0, project_home)
-
-logging.basicConfig(stream=sys.stderr)
-
-from app import app as application
-```
-
----
-
-### 6️⃣ Python Virtual Environment
+### 5️⃣ Python Virtual Environment
 
 Create and set up a virtual environment:
 
@@ -156,7 +129,7 @@ deactivate
 
 ---
 
-### 7️⃣ Apache Configuration
+### 6️⃣ Apache Configuration
 
 Create a new Virtual Host file:
 
@@ -186,7 +159,7 @@ Paste the configuration (replace `your_server_ip` with your server’s actual IP
 
 ---
 
-### 8️⃣ Final Steps & Launch
+### 7️⃣ Final Steps & Launch
 
 Set correct file permissions and enable your site:
 
@@ -220,32 +193,13 @@ lamp-todo-app/
 ├── todo.wsgi
 ├── templates/
 │   ├── index.html
-│   └── layout.html
 ├── static/
 │   └── style.css
+|   └── script.js
 └── venv/
 ```
 
----
 
-## 💡 Author
-
-**Ray HQ**
-📘 GitHub: [rayhq](https://github.com/rayhq)
-
----
-
-## 🧾 License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-⭐ *If you found this project helpful, give it a star on GitHub!*
-
-```
-
----
 
 Would you like me to **add emojis, badges (like Flask, MySQL, Apache2), and a screenshot preview section** to make it look more visually appealing for GitHub?
 ```
