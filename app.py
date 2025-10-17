@@ -4,13 +4,6 @@ from config import db_config
 
 app = Flask(__name__)
 
-# --- Database Connection Details ---
-db_config = {
-    'host': 'localhost',
-    'user': 'todo_user',
-    'password': 'your_password', # <-- IMPORTANT: Use the password you created
-    'database': 'todo_db'
-}
 
 def get_db_connection():
     """Establishes a connection to the database."""

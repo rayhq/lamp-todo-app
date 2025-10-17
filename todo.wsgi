@@ -2,7 +2,7 @@ import sys
 import logging
 
 # Add the project directory to the Python path
-project_home = u'/home/kmct-ietm/todo_app'
+project_home = u'/home/kmct-ietm/lamp-todo-app'
 if project_home not in sys.path:
     sys.path.insert(0, project_home)
 
