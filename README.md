@@ -1,27 +1,29 @@
-# LAMP Stack To-Do List Application
+# 📝 LAMP Stack To-Do List Application
 
-A simple yet powerful To-Do list web application built on the classic LAMP stack (Linux, Apache, MySQL, Python). This project uses Python's Flask micro-framework for the backend, showcasing a full-stack web development setup.
+A simple yet powerful **To-Do list web application** built on the classic **LAMP stack** (Linux, Apache, MySQL, Python).  
+This project uses **Python’s Flask micro-framework** for the backend, showcasing a complete full-stack web development setup.
 
 ---
 
 ## ✨ Features
 
-* **Create**: Add new tasks to your to-do list.
-* **Read**: View all existing tasks, sorted by creation date.
-* **Update**: Mark tasks as "Done" or "Undo" to toggle their completion status.
-* **Delete**: Permanently remove tasks from the list.
+- ✅ **Create:** Add new tasks to your to-do list.  
+- 📋 **Read:** View all existing tasks, sorted by creation date.  
+- 🔄 **Update:** Mark tasks as **Done** or **Undo** to toggle their completion status.  
+- ❌ **Delete:** Permanently remove tasks from the list.  
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Operating System**: Linux
-* **Web Server**: Apache2
-* **Database**: MySQL
-* **Backend Language**: Python
-
-  * **Framework**: Flask
-* **Deployment**: WSGI (Web Server Gateway Interface)
+| Layer | Technology |
+|-------|-------------|
+| **Operating System** | Linux (Debian / Ubuntu) |
+| **Web Server** | Apache2 |
+| **Database** | MySQL |
+| **Backend Language** | Python |
+| **Framework** | Flask |
+| **Deployment** | WSGI (Web Server Gateway Interface) |
 
 ---
 
@@ -29,35 +31,40 @@ A simple yet powerful To-Do list web application built on the classic LAMP stack
 
 Follow these steps to set up and run the application on your server.
 
-### 1. Prerequisites
+---
 
-Ensure that you have the following installed on your system. This guide is tailored for Debian/Ubuntu-based systems.
+### 1️⃣ Prerequisites
+
+Make sure you have the required packages installed:
 
 ```bash
 sudo apt update
 sudo apt install apache2 mysql-server python3 python3-pip libapache2-mod-wsgi-py3 python3.12-venv -y
-```
+````
 
-### 2. Clone the Repository
+---
 
-Clone this repository to your server:
+### 2️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/rayhq/lamp-todo-app.git
-cd lamp-todo-app
+# Clone the project into the /var/www directory
+sudo git clone https://github.com/rayhq/lamp-todo-app.git /var/www/lamp-todo-app
+
+# Navigate into the project directory
+cd /var/www/lamp-todo-app
 ```
 
-### 3. Database Setup
+---
 
-Create a new database and a dedicated user for the application.
+### 3️⃣ Database Setup
 
-1. Log in to MySQL as the root user:
+#### Log in to MySQL:
 
 ```bash
 sudo mysql -u root
 ```
 
-2. Run the following SQL commands to create the database and user (replace `your_password` with a strong password):
+#### Run the following SQL commands (replace `your_password` with a strong password):
 
 ```sql
 CREATE DATABASE todo_db;
@@ -67,13 +74,13 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-3. Log in as the new user and create the tasks table:
+#### Create the tasks table:
 
 ```bash
 mysql -u todo_user -p todo_db
 ```
 
-4. Create the tasks table with the following SQL:
+Then execute:
 
 ```sql
 CREATE TABLE tasks (
@@ -85,60 +92,88 @@ CREATE TABLE tasks (
 EXIT;
 ```
 
-### 4. Application Configuration
+---
 
-The application requires a configuration file for database credentials. This file is intentionally ignored by Git for security reasons.
+### 4️⃣ Application Configuration
 
-1. Create a file named `config.py` in the root of the project directory.
+Create a `config.py` file to securely store your database credentials:
 
-2. Add your database credentials as shown below:
+```bash
+sudo nano config.py
+```
+
+Add this content:
 
 ```python
 # File: config.py
-
 db_config = {
     'host': 'localhost',
     'user': 'todo_user',
-    'password': 'your_password',  # <-- Use the password you set above
+    'password': 'your_password',  # Use the password from above
     'database': 'todo_db'
 }
 ```
 
-### 5. Python Virtual Environment
+---
 
-Create a virtual environment and install the required dependencies.
+### 5️⃣ Configure the WSGI Entry Point
+
+The `todo.wsgi` file connects Apache with your Flask app.
 
 ```bash
-# Create the environment
-python3 -m venv venv
+sudo nano todo.wsgi
+```
 
-# Activate the environment
+Replace its content with:
+
+```python
+# File: todo.wsgi
+import os
+import sys
+import logging
+
+project_home = os.path.dirname(__file__)
+if project_home not in sys.path:
+    sys.path.insert(0, project_home)
+
+logging.basicConfig(stream=sys.stderr)
+
+from app import app as application
+```
+
+---
+
+### 6️⃣ Python Virtual Environment
+
+Create and set up a virtual environment:
+
+```bash
+sudo python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
-pip install Flask mysql-connector-python
+sudo venv/bin/pip install Flask mysql-connector-python
+deactivate
 ```
 
-### 6. Apache Configuration
+---
 
-To serve the application via Apache, you need to create a virtual host configuration file.
+### 7️⃣ Apache Configuration
 
-1. Create a new Apache configuration file (replace `your-project-name` with the name you choose for your project):
+Create a new Virtual Host file:
 
 ```bash
-sudo nano /etc/apache2/sites-available/your-project-name.conf
+sudo nano /etc/apache2/sites-available/todoapp.conf
 ```
 
-2. Paste the following configuration (replace `your_username` and `your_server_ip`):
+Paste the configuration (replace `your_server_ip` with your server’s actual IP or domain):
 
 ```apache
 <VirtualHost *:80>
     ServerName your_server_ip
 
-    WSGIDaemonProcess todoapp user=www-data group=www-data threads=5 python-path=/home/your_username/lamp-todo-app/venv/lib/python3.12/site-packages
-    WSGIScriptAlias / /home/your_username/lamp-todo-app/todo.wsgi
+    WSGIDaemonProcess todoapp user=www-data group=www-data threads=5 python-path=/var/www/lamp-todo-app/venv/lib/python3.12/site-packages
+    WSGIScriptAlias / /var/www/lamp-todo-app/todo.wsgi
 
-    <Directory /home/your_username/lamp-todo-app>
+    <Directory /var/www/lamp-todo-app>
         WSGIProcessGroup todoapp
         WSGIApplicationGroup %{GLOBAL}
         Require all granted
@@ -149,21 +184,16 @@ sudo nano /etc/apache2/sites-available/your-project-name.conf
 </VirtualHost>
 ```
 
-### 7. Final Steps & Launch
+---
 
-Set the correct permissions and enable the site:
+### 8️⃣ Final Steps & Launch
+
+Set correct file permissions and enable your site:
 
 ```bash
-# Grant Apache access to your home and project directory (replace `your_username`)
-sudo chmod 755 /home/your_username
-sudo chown -R :www-data .
-sudo chmod -R 775 .
-
-# Enable the site (replace `your-project-name` with the filename)
-sudo a2ensite your-project-name.conf
+sudo chown -R www-data:www-data /var/www/lamp-todo-app
+sudo a2ensite todoapp.conf
 sudo a2dissite 000-default.conf
-
-# Restart Apache
 sudo systemctl restart apache2
 ```
 
@@ -171,38 +201,52 @@ sudo systemctl restart apache2
 
 ## 🖥️ Usage
 
-1. Open your web browser and navigate to your server’s IP address: `http://your_server_ip`
-2. You should see the To-Do list application running.
-3. From there, you can:
+Visit your server’s IP or domain in your browser:
 
-   * Add new tasks
-   * Mark tasks as completed or undo their completion status
-   * Delete tasks from your list
+```
+http://your_server_ip
+```
 
----
-
-## 🔧 Troubleshooting
-
-If you run into issues, here are some common problems and solutions:
-
-1. **MySQL Connection Issues**: Make sure that your MySQL database is running, and your credentials in `config.py` are correct.
-
-2. **Apache Configuration Errors**: Double-check your Apache virtual host configuration, especially the file paths and user permissions.
-
-3. **Module Errors**: Ensure that all dependencies are installed in your virtual environment. Run `pip list` to verify.
+You’ll see the To-Do List web app running — ready to **add**, **complete**, and **delete** tasks!
 
 ---
 
-## 📄 License
+## 📂 Project Structure
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
+lamp-todo-app/
+├── app.py
+├── config.py
+├── todo.wsgi
+├── templates/
+│   ├── index.html
+│   └── layout.html
+├── static/
+│   └── style.css
+└── venv/
+```
 
 ---
 
-## 🙋‍♂️ Contributing
+## 💡 Author
 
-Feel free to fork this repository and submit pull requests. If you find any bugs or have suggestions for improvements, open an issue and we’ll take a look!
+**Ray HQ**
+📘 GitHub: [rayhq](https://github.com/rayhq)
 
 ---
 
-This README should make it easy for anyone to set up and contribute to your To-Do list application. Let me know if you'd like me to refine it further!
+## 🧾 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+⭐ *If you found this project helpful, give it a star on GitHub!*
+
+```
+
+---
+
+Would you like me to **add emojis, badges (like Flask, MySQL, Apache2), and a screenshot preview section** to make it look more visually appealing for GitHub?
+```
+
